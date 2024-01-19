@@ -3,11 +3,11 @@ package com.example.myBlog.posts.service;
 import com.example.myBlog.posts.entity.Post;
 import com.example.myBlog.posts.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +21,9 @@ public class PostService {
     private final PostRepository postRepository;
 
     public List<Post> findAllByTitle(String title, Pageable pageable) {
-
-
         List<Post> postList = postRepository.findAllByTitleContaining(title, pageable);
-
         return postList;
+
     }
 
     public List<Post> findAll() {
@@ -49,13 +47,15 @@ public class PostService {
             return;
         }
 
-        findPost.setTitle(title);
-        findPost.setBody(body);
+        findPost.updatePost(title, body);
     }
 
     @Transactional
-    public Long save(String title, String body, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        return postRepository.save(Post.createPost(title, body, createdAt, updatedAt)).getId();
+    public Long save(String title, String body) {
+
+        Post save = postRepository.save(Post.createPost(title, body));
+
+        return save.getId();
     }
 
     public Post getById(Long id) {
